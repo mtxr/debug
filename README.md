@@ -115,9 +115,7 @@ a debug line belongs to.
 
 #### Node.js
 
-In Node.js, colors are enabled when stderr is a TTY. You also _should_ install
-the [`supports-color`](https://npmjs.org/supports-color) module alongside debug,
-otherwise debug will only use a small handful of basic colors.
+In Node.js, colors are enabled when stderr is a TTY.
 
 <img width="521" src="https://user-images.githubusercontent.com/71256/29092181-47f6a9e6-7c3a-11e7-9a14-1928d8a711cd.png">
 

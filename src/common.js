@@ -11,7 +11,7 @@ function setup(env) {
 	createDebug.disable = disable;
 	createDebug.enable = enable;
 	createDebug.enabled = enabled;
-	createDebug.humanize = require('ms');
+	createDebug.humanize = require('./ms');
 
 	Object.keys(env).forEach(key => {
 		createDebug[key] = env[key];
@@ -19,8 +19,9 @@ function setup(env) {
 
 	/**
 	* Active `debug` instances.
+	* @type {Object<String, Function>}
 	*/
-	createDebug.instances = [];
+	createDebug.instances = {};
 
 	/**
 	* The currently active debug mode names, and names to skip.
@@ -62,6 +63,8 @@ function setup(env) {
 	* @api public
 	*/
 	function createDebug(namespace) {
+		if (createDebug.instances[namespace]) return createDebug.instances[namespace];
+
 		let prevTime;
 
 		function debug(...args) {
@@ -74,8 +77,7 @@ function setup(env) {
 
 			// Set `diff` timestamp
 			const curr = Number(new Date());
-			const ms = curr - (prevTime || curr);
-			self.diff = ms;
+			self.diff = curr - (prevTime || curr);
 			self.prev = prevTime;
 			self.curr = curr;
 			prevTime = curr;
@@ -128,15 +130,14 @@ function setup(env) {
 			createDebug.init(debug);
 		}
 
-		createDebug.instances.push(debug);
+		createDebug.instances[namespace] = debug;
 
 		return debug;
 	}
 
 	function destroy() {
-		const index = createDebug.instances.indexOf(this);
-		if (index !== -1) {
-			createDebug.instances.splice(index, 1);
+		if (createDebug.instances[this.namespace] !== undefined) {
+			delete createDebug.instances[this.namespace];
 			return true;
 		}
 		return false;
@@ -180,8 +181,10 @@ function setup(env) {
 			}
 		}
 
-		for (i = 0; i < createDebug.instances.length; i++) {
-			const instance = createDebug.instances[i];
+		const keys = Object.keys(createDebug.instances);
+
+		for (i = 0; i < keys.length; i++) {
+			const instance = createDebug.instances[keys[i]];
 			instance.enabled = createDebug.enabled(instance.namespace);
 		}
 	}
