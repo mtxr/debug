@@ -135,11 +135,11 @@ function useColors() {
 
 function formatArgs(args) {
 	args[0] = (this.useColors ? '%c' : '') +
-		this.namespace +
+	'[' + this.namespace + ']' +
 		(this.useColors ? ' %c' : ' ') +
 		args[0] +
 		(this.useColors ? '%c ' : ' ') +
-		'+' + module.exports.humanize(this.diff);
+		'(+' + module.exports.humanize(this.diff) + ')';
 
 	if (!this.useColors) {
 		return;
